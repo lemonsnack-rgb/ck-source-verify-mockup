@@ -24,8 +24,6 @@
   --partial-bg: #fffbeb;
   --mismatch-color: #ff4f79;
   --mismatch-bg: #fff1f4;
-  --insuff-color: #939395;
-  --insuff-bg: #f7f8f8;
   --registered-color: #7c52f1;
   --registered-bg: #f3f0ff;
   --bg: #e9e9ea;
@@ -175,7 +173,6 @@ body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;font-size:16px
 .sv-mini-stat.exact{background:var(--exact-bg)}.sv-mini-stat.exact .n{color:var(--exact-color)}
 .sv-mini-stat.partial{background:var(--partial-bg)}.sv-mini-stat.partial .n{color:var(--partial-color)}
 .sv-mini-stat.mismatch{background:var(--mismatch-bg)}.sv-mini-stat.mismatch .n{color:var(--mismatch-color)}
-.sv-mini-stat.insuff{background:var(--insuff-bg)}.sv-mini-stat.insuff .n{color:var(--insuff-color)}
 .sv-mini-note{font-size:12px;color:var(--text-muted)}.sv-mini-note strong{color:var(--mismatch-color)}
 
 /* ── Footer Bar (sticky) ── */
@@ -208,12 +205,12 @@ body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;font-size:16px
 .det-stats-row{display:flex;align-items:baseline;gap:24px;margin-bottom:16px;flex-wrap:wrap}
 .det-stat-block{display:flex;flex-direction:column;gap:2px}
 .det-stat-num{font-size:28px;font-weight:700;line-height:1.1}
-.det-stat-num.total{color:var(--text)}.det-stat-num.exact{color:var(--exact-color)}.det-stat-num.partial{color:var(--partial-color)}.det-stat-num.mismatch{color:var(--mismatch-color)}.det-stat-num.insuff{color:var(--insuff-color)}
+.det-stat-num.total{color:var(--text)}.det-stat-num.exact{color:var(--exact-color)}.det-stat-num.partial{color:var(--partial-color)}.det-stat-num.mismatch{color:var(--mismatch-color)}
 .det-stat-label{font-size:13px;color:var(--text-muted);font-weight:500;display:flex;align-items:center;gap:4px}
 .det-stat-label svg{width:14px;height:14px;flex-shrink:0}
 .det-stat-divider{width:1px;height:32px;background:var(--border)}
 .det-progress-bar{height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;display:flex;margin-bottom:14px}
-.det-progress-seg{height:100%}.det-progress-seg.exact{background:var(--exact-color)}.det-progress-seg.partial{background:var(--partial-color)}.det-progress-seg.mismatch{background:var(--mismatch-color)}.det-progress-seg.insuff{background:var(--insuff-color)}
+.det-progress-seg{height:100%}.det-progress-seg.exact{background:var(--exact-color)}.det-progress-seg.partial{background:var(--partial-color)}.det-progress-seg.mismatch{background:var(--mismatch-color)}
 .det-type-tags{display:flex;gap:8px;flex-wrap:wrap}
 .det-type-tag{font-size:13px;padding:5px 12px;border-radius:4px;font-weight:500;background:var(--surface);color:var(--text-sub);border:1px solid var(--border)}
 
@@ -263,10 +260,10 @@ body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;font-size:16px
 
 .det-ref-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
 .det-status-icon{width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.det-status-icon.exact{background:var(--exact-color)}.det-status-icon.partial{background:var(--partial-color)}.det-status-icon.mismatch{background:var(--mismatch-color)}.det-status-icon.insuff{background:var(--insuff-color)}.det-status-icon.registered{background:var(--registered-color)}
+.det-status-icon.exact{background:var(--exact-color)}.det-status-icon.partial{background:var(--partial-color)}.det-status-icon.mismatch{background:var(--mismatch-color)}.det-status-icon.registered{background:var(--registered-color)}
 .det-status-icon svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.5}
 .det-status-label{font-size:13px;font-weight:700;text-align:center}
-.det-status-label.exact{color:var(--exact-color)}.det-status-label.partial{color:var(--partial-color)}.det-status-label.mismatch{color:var(--mismatch-color)}.det-status-label.insuff{color:var(--insuff-color)}.det-status-label.registered{color:var(--registered-color)}
+.det-status-label.exact{color:var(--exact-color)}.det-status-label.partial{color:var(--partial-color)}.det-status-label.mismatch{color:var(--mismatch-color)}.det-status-label.registered{color:var(--registered-color)}
 .det-ck-link{font-size:13px;color:var(--ck-cyan-dark);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:4px}
 .det-ck-link:hover{text-decoration:underline}
 .det-ck-link svg{width:13px;height:13px}
@@ -462,10 +459,9 @@ body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;font-size:16px
             <div class="sv-mini-stats">
               <div class="sv-mini-stat exact"><div class="n" id="pExact">11</div><div class="l">확인</div></div>
               <div class="sv-mini-stat partial"><div class="n" id="pPartial">3</div><div class="l">부분일치</div></div>
-              <div class="sv-mini-stat mismatch"><div class="n" id="pMismatch">2</div><div class="l">미확인</div></div>
-              <div class="sv-mini-stat insuff"><div class="n" id="pInsuff">2</div><div class="l">판정불가</div></div>
+              <div class="sv-mini-stat mismatch"><div class="n" id="pMismatch">4</div><div class="l">미확인</div></div>
             </div>
-            <div class="sv-mini-note">참고문헌 18건 중 <strong>미확인 <span id="pMNote">2</span>건</strong></div>
+            <div class="sv-mini-note">참고문헌 18건 중 <strong>미확인 <span id="pMNote">4</span>건</strong></div>
           </div>
         </div>
       </div><!-- /ck-panel -->
@@ -512,14 +508,12 @@ body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;font-size:16px
       <div class="det-stat-divider"></div>
       <div class="det-stat-block"><span class="det-stat-num exact" id="dExact">11</span><span class="det-stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--exact-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>확인</span></div>
       <div class="det-stat-block"><span class="det-stat-num partial" id="dPartial">3</span><span class="det-stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--partial-color)" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>부분일치</span></div>
-      <div class="det-stat-block"><span class="det-stat-num mismatch" id="dMismatch">2</span><span class="det-stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mismatch-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>미확인</span></div>
-      <div class="det-stat-block"><span class="det-stat-num insuff" id="dInsuff">2</span><span class="det-stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--insuff-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>판정불가</span></div>
+      <div class="det-stat-block"><span class="det-stat-num mismatch" id="dMismatch">4</span><span class="det-stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mismatch-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>미확인</span></div>
     </div>
     <div class="det-progress-bar" id="detProgress">
       <div class="det-progress-seg exact" style="width:61.1%"></div>
       <div class="det-progress-seg partial" style="width:16.7%"></div>
-      <div class="det-progress-seg mismatch" style="width:11.1%"></div>
-      <div class="det-progress-seg insuff" style="width:11.1%"></div>
+      <div class="det-progress-seg mismatch" style="width:22.2%"></div>
     </div>
     <div class="det-type-tags">
       <span class="det-type-tag">학술논문 12건</span>
@@ -543,8 +537,7 @@ body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;font-size:16px
       <button class="det-ftab active" onclick="filter(this,'all')">전체 <span class="cnt">18</span></button>
       <button class="det-ftab" onclick="filter(this,'exact')">확인 <span class="cnt" id="fE">11</span></button>
       <button class="det-ftab" onclick="filter(this,'partial')">부분일치 <span class="cnt">3</span></button>
-      <button class="det-ftab" onclick="filter(this,'mismatch')">미확인 <span class="cnt" id="fM">2</span></button>
-      <button class="det-ftab" onclick="filter(this,'insuff')">판정불가 <span class="cnt" id="fI">2</span></button>
+      <button class="det-ftab" onclick="filter(this,'mismatch')">미확인 <span class="cnt" id="fM">4</span></button>
     </div>
   </div>
 
@@ -602,16 +595,16 @@ const R=[
 {id:9,c:'손정주, 류성룡 (2015). 조선후기 주택의 사당구성과 건축형식 연구. <em>한국주거학회 논문집</em>, 27(2), 191-196.',v:'exact',t:'paper',tl:'학술논문',m:{title:'조선후기 주택의 사당구성과 건축형식 연구',creators:'손정주, 류성룡',publisher:'한국주거학회 논문집',year:'2015'}},
 {id:10,c:'손태진, 조중근, 김흥곤 (1997). 조선시대 삼묘건축 비교. <em>대한건축학회 논문집</em>, 13(7), 105-116.',v:'exact',t:'paper',tl:'학술논문',m:{title:'조선시대 삼묘건축 비교',creators:'손태진, 조중근, 김흥곤',publisher:'대한건축학회 논문집',year:'1997'}},
 {id:11,c:'이상범 (연도미상). 금산칠백의총도.',v:'partial',t:'paper',tl:'학술논문',mf:['제목 일치','저자 일치'],uf:['날짜 누락'],m:{title:'금산칠백의총도',creators:'이상범',publisher:'',year:''}},
-{id:12,c:'서울특별시 (1985). <em>효창공원정비 및 사당건립기본계획</em>. 서울특별시.',v:'insuff',t:'report',tl:'보고서',uf:['식별자 없음'],m:{title:'효창공원정비 및 사당건립기본계획',creators:'서울특별시',publisher:'서울특별시',year:'1985'}},
+{id:12,c:'서울특별시 (1985). <em>효창공원정비 및 사당건립기본계획</em>. 서울특별시.',v:'mismatch',t:'report',tl:'보고서',uf:['식별자 없음'],m:{title:'효창공원정비 및 사당건립기본계획',creators:'서울특별시',publisher:'서울특별시',year:'1985'}},
 {id:13,c:'이성혜 (2019). 琉球의 공자묘 창건과 명륜당 건립의 의미. <em>퇴계학논총</em>, 33, 183-209.',v:'exact',t:'paper',tl:'학술논문',m:{title:'琉球의 공자묘 창건과 명륜당 건립의 의미',creators:'이성혜',publisher:'퇴계학논총',year:'2019'}},
 {id:14,c:'정영태 (2014). 정유재란시 남원성전투와 만인의총. <em>호남사학회 논문집</em>, 59, 139-212.',v:'exact',t:'paper',tl:'학술논문',m:{title:'정유재란시 남원성전투와 만인의총',creators:'정영태',publisher:'호남사학회 논문집',year:'2014'}},
 {id:15,c:'최지희 (1990). 조선시대사당의 장소성 해석. <em>대한건축학회논문집</em>, 6(1), 141-157.',v:'partial',t:'paper',tl:'학술논문',mf:['제목 일치','날짜 일치'],uf:['저자 표기 차이'],m:{title:'조선시대사당의 장소성 해석',creators:'최지희',publisher:'대한건축학회논문집',year:'1990'}},
 {id:16,c:'홍승재, 박언곤, 김흥곤 (1990). 조선시대 건축과 예제에 관한 연구. <em>대한건축학회 논문집</em>, 6(1), 101-108.',v:'exact',t:'paper',tl:'학술논문',m:{title:'조선시대 건축과 예제에 관한 연구',creators:'홍승재, 박언곤, 김흥곤',publisher:'대한건축학회 논문집',year:'1990'}},
 {id:17,c:'이정국, 박광규, 이해성 (1995). 조선시대 향교건축의 배치와 공간구성에 관한 연구. <em>대한건축학회 논문집</em>.',v:'mismatch',t:'paper',tl:'학술논문',m:{title:'조선시대 향교건축의 배치와 공간구성에 관한 연구',creators:'이정국, 박광규, 이해성',publisher:'대한건축학회 논문집',year:'1995'}},
-{id:18,c:'조선일보 (1959.05.13). 칠백의총과 종용당. <em>조선일보</em>.',v:'insuff',t:'news',tl:'뉴스',uf:['CK DB 미등록'],m:{title:'칠백의총과 종용당',creators:'조선일보',publisher:'조선일보',year:'1959',date:'1959-05-13',url:'https://newslibrary.chosun.com/...'}}
+{id:18,c:'조선일보 (1959.05.13). 칠백의총과 종용당. <em>조선일보</em>.',v:'mismatch',t:'news',tl:'뉴스',uf:['CK DB 미등록'],m:{title:'칠백의총과 종용당',creators:'조선일보',publisher:'조선일보',year:'1959',date:'1959-05-13',url:'https://newslibrary.chosun.com/...'}}
 ];
-const VL={exact:'확인',partial:'부분일치',mismatch:'미확인',insuff:'판정불가'};
-const VI={exact:'<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',partial:'<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="none"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',mismatch:'<svg viewBox="0 0 24 24"><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',insuff:'<svg viewBox="0 0 24 24"><line x1="8" y1="12" x2="16" y2="12"/></svg>'};
+const VL={exact:'확인',partial:'부분일치',mismatch:'미확인'};
+const VI={exact:'<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',partial:'<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="none"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',mismatch:'<svg viewBox="0 0 24 24"><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'};
 let sel=new Set(),reg=new Set();
 
 // ═══ Navigation ═══
@@ -626,7 +619,7 @@ function renderList(f){
   f=f||'all';const el=document.getElementById('refList');let h='';
   R.forEach(r=>{
     if(f!=='all'&&r.v!==f)return;
-    const can=(r.v==='mismatch'||r.v==='insuff'||r.v==='partial')&&!reg.has(r.id);
+    const can=(r.v==='mismatch'||r.v==='partial')&&!reg.has(r.id);
     const done=reg.has(r.id);
     const vc=done?'registered':r.v;
     h+=`<div class="det-ref-card${done?' registered':''}" data-v="${r.v}">`;
@@ -685,16 +678,14 @@ function recheck(){
 
 // ═══ Counts ═══
 function updCounts(){
-  const c={exact:0,partial:0,mismatch:0,insuff:0};R.forEach(r=>c[r.v]++);
+  const c={exact:0,partial:0,mismatch:0};R.forEach(r=>c[r.v]++);
   ['pExact','dExact','fE'].forEach(x=>{const e=document.getElementById(x);if(e)e.textContent=c.exact});
   ['pPartial','dPartial'].forEach(x=>{const e=document.getElementById(x);if(e)e.textContent=c.partial});
   ['pMismatch','dMismatch','fM'].forEach(x=>{const e=document.getElementById(x);if(e)e.textContent=c.mismatch});
-  ['pInsuff','dInsuff','fI'].forEach(x=>{const e=document.getElementById(x);if(e)e.textContent=c.insuff});
   const mn=document.getElementById('pMNote');if(mn)mn.textContent=c.mismatch;
-  // Update progress bar
   const total=18;
   const pb=document.getElementById('detProgress');
-  if(pb){pb.innerHTML=`<div class="det-progress-seg exact" style="width:${c.exact/total*100}%"></div><div class="det-progress-seg partial" style="width:${c.partial/total*100}%"></div><div class="det-progress-seg mismatch" style="width:${c.mismatch/total*100}%"></div><div class="det-progress-seg insuff" style="width:${c.insuff/total*100}%"></div>`}
+  if(pb){pb.innerHTML=`<div class="det-progress-seg exact" style="width:${c.exact/total*100}%"></div><div class="det-progress-seg partial" style="width:${c.partial/total*100}%"></div><div class="det-progress-seg mismatch" style="width:${c.mismatch/total*100}%"></div>`}
 }
 
 // ═══ Toast ═══
