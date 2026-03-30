@@ -121,7 +121,6 @@ body {
 .match-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
 .match-pill.matched { background: #dcfce7; color: #15803d; }
 .match-pill.unmatched { background: #fee2e2; color: #dc2626; }
-.confidence-tag { font-size: 11px; color: var(--text-tertiary); margin-left: 4px; }
 
 /* ── Status & Actions (right side) ── */
 .ref-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
@@ -440,7 +439,6 @@ body {
             <span class="match-pill matched">제목 일치</span>
             <span class="match-pill matched">연도 일치</span>
             <span class="match-pill unmatched">저자 불일치</span>
-            <span class="confidence-tag">신뢰도 72%</span>
           </div>
         </div>
         <div class="ref-right">
@@ -529,7 +527,6 @@ body {
             <span class="match-pill matched">제목 일치</span>
             <span class="match-pill matched">저자 일치</span>
             <span class="match-pill unmatched">날짜 누락</span>
-            <span class="confidence-tag">신뢰도 65%</span>
           </div>
         </div>
         <div class="ref-right">
@@ -590,7 +587,6 @@ body {
             <span class="match-pill matched">제목 일치</span>
             <span class="match-pill matched">날짜 일치</span>
             <span class="match-pill unmatched">저자 표기 차이</span>
-            <span class="confidence-tag">신뢰도 78%</span>
           </div>
         </div>
         <div class="ref-right">
@@ -660,7 +656,7 @@ body {
 <div class="modal-overlay" id="registerModal">
   <div class="modal">
     <div class="modal-header">
-      <h2>CK 텀즈에 출처 등록</h2>
+      <h2>CK 텀즈 등록</h2>
       <button class="modal-close" onclick="closeRegisterModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -668,7 +664,7 @@ body {
       <div class="modal-rawtext" id="modalRawText">장철수 (1992). 사당의 역사와 건축. 서울: 민속출판사.</div>
 
       <div class="modal-section-title">
-        파싱된 메타데이터
+        메타데이터 분석 결과
         <span class="auto-badge">자동 추출</span>
       </div>
 
