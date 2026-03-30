@@ -22,10 +22,14 @@
   --ck-pink-light: #fff1f4;
   --ck-purple: #7c52f1;
   --ck-purple-light: #f3f0ff;
-  --confirmed-color: #00c2ff;
-  --confirmed-bg: #f2fcff;
-  --unconfirmed-color: #ff4f79;
-  --unconfirmed-bg: #fff1f4;
+  --exact-color: #00c2ff;
+  --exact-bg: #f2fcff;
+  --partial-color: #f59e0b;
+  --partial-bg: #fffbeb;
+  --mismatch-color: #ff4f79;
+  --mismatch-bg: #fff1f4;
+  --insufficient-color: #939395;
+  --insufficient-bg: #f7f8f8;
   --registered-color: #7c52f1;
   --registered-bg: #f3f0ff;
   --radius: 8px;
@@ -53,22 +57,24 @@ body {
 /* ── Summary ── */
 .summary-card { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin: 24px 0; }
 .summary-title { font-size: 14px; font-weight: 700; color: var(--text-tertiary); margin-bottom: 16px; }
-.stats-row { display: flex; align-items: baseline; gap: 32px; margin-bottom: 16px; }
+.stats-row { display: flex; align-items: baseline; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
 .stat-block { display: flex; flex-direction: column; gap: 2px; }
 .stat-number { font-size: 28px; font-weight: 700; line-height: 1.1; }
 .stat-number.total { color: var(--text-primary); }
-.stat-number.confirmed { color: var(--confirmed-color); }
-.stat-number.unconfirmed { color: var(--unconfirmed-color); }
-.stat-number.registered { color: var(--registered-color); }
+.stat-number.exact { color: var(--exact-color); }
+.stat-number.partial { color: var(--partial-color); }
+.stat-number.mismatch { color: var(--mismatch-color); }
+.stat-number.insufficient { color: var(--insufficient-color); }
 .stat-label { font-size: 13px; color: var(--text-tertiary); font-weight: 500; display: flex; align-items: center; gap: 4px; }
 .stat-label svg { width: 14px; height: 14px; flex-shrink: 0; }
 .stat-divider { width: 1px; height: 32px; background: var(--border); }
 .progress-bar { height: 8px; background: var(--border-light); border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 14px; }
 .progress-segment { height: 100%; }
-.progress-segment.confirmed { background: var(--confirmed-color); }
-.progress-segment.unconfirmed { background: var(--unconfirmed-color); }
-.progress-segment.registered { background: var(--registered-color); }
-.type-tags { display: flex; gap: 8px; }
+.progress-segment.exact { background: var(--exact-color); }
+.progress-segment.partial { background: var(--partial-color); }
+.progress-segment.mismatch { background: var(--mismatch-color); }
+.progress-segment.insufficient { background: var(--insufficient-color); }
+.type-tags { display: flex; gap: 8px; flex-wrap: wrap; }
 .type-tag { font-size: 13px; padding: 5px 12px; border-radius: 4px; font-weight: 500; background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); }
 
 /* ── Info Note ── */
@@ -77,8 +83,8 @@ body {
 
 /* ── Filter Bar ── */
 .filter-bar { display: flex; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); padding-top: 8px; }
-.filter-tabs { display: flex; gap: 0; }
-.filter-tab { padding: 8px 16px; font-size: 16px; font-weight: 500; color: var(--text-tertiary); border: 1px solid var(--border); border-right: none; background: var(--surface); cursor: pointer; transition: all .15s; font-family: inherit; }
+.filter-tabs { display: flex; gap: 0; flex-wrap: wrap; }
+.filter-tab { padding: 8px 14px; font-size: 15px; font-weight: 500; color: var(--text-tertiary); border: 1px solid var(--border); border-right: none; background: var(--surface); cursor: pointer; transition: all .15s; font-family: inherit; }
 .filter-tab:first-child { border-radius: var(--radius) 0 0 var(--radius); }
 .filter-tab:last-child { border-radius: 0 var(--radius) var(--radius) 0; border-right: 1px solid var(--border); }
 .filter-tab:hover { color: var(--text-secondary); background: var(--surface-alt); }
@@ -101,39 +107,53 @@ body {
 .ref-citation em { font-style: italic; }
 .ref-tags { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
 .ref-type-badge { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
-.ref-type-badge.thesis { background: var(--ck-cyan-light); color: var(--ck-cyan-dark); }
+.ref-type-badge.paper { background: var(--ck-cyan-light); color: var(--ck-cyan-dark); }
 .ref-type-badge.book { background: #fff8ed; color: #b45309; }
-.ref-type-badge.web { background: #f0fdf4; color: #15803d; }
+.ref-type-badge.webpage { background: #f0fdf4; color: #15803d; }
+.ref-type-badge.news { background: #fef3c7; color: #92400e; }
+.ref-type-badge.report { background: #ede9fe; color: #6d28d9; }
+.ref-type-badge.patent { background: #fce7f3; color: #9d174d; }
 .ref-field-tag { font-size: 12px; color: var(--text-tertiary); background: var(--surface-alt); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border-light); }
 .ref-field-tag strong { font-weight: 600; color: var(--text-secondary); }
+
+/* ── Matched Fields (for partialMatch) ── */
+.matched-fields { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.match-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.match-pill.matched { background: #dcfce7; color: #15803d; }
+.match-pill.unmatched { background: #fee2e2; color: #dc2626; }
+.confidence-tag { font-size: 11px; color: var(--text-tertiary); margin-left: 4px; }
 
 /* ── Status & Actions (right side) ── */
 .ref-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
 
-/* Status icon + label (CK style: circle icon with check/exclamation) */
 .status-icon {
-  width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  width: 23px; height: 23px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
 }
-.status-icon.confirmed { background: var(--confirmed-color); }
-.status-icon.unconfirmed { background: var(--unconfirmed-color); }
-.status-icon svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.5; }
-.status-icon.unconfirmed .excl { font-family: inherit; font-size: 16px; font-weight: 800; color: #fff; line-height: 1; stroke: none; fill: none; }
+.status-icon.exact { background: var(--exact-color); }
+.status-icon.partial { background: var(--partial-color); }
+.status-icon.mismatch { background: var(--mismatch-color); }
+.status-icon.insufficient { background: var(--insufficient-color); }
+.status-icon svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.5; }
+.status-icon .excl { font-family: inherit; font-size: 15px; font-weight: 800; color: #fff; line-height: 1; stroke: none; fill: none; }
+.status-icon .dash { font-family: inherit; font-size: 16px; font-weight: 800; color: #fff; line-height: 1; }
 
 .status-label { font-size: 13px; font-weight: 700; text-align: center; }
-.status-label.confirmed { color: var(--confirmed-color); }
-.status-label.unconfirmed { color: var(--unconfirmed-color); }
+.status-label.exact { color: var(--exact-color); }
+.status-label.partial { color: var(--partial-color); }
+.status-label.mismatch { color: var(--mismatch-color); }
+.status-label.insufficient { color: var(--insufficient-color); }
 
-/* CK 텀즈 link (small, inline) */
+/* CK 텀즈 link */
 .ck-link { font-size: 13px; color: var(--ck-cyan-dark); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
 .ck-link:hover { text-decoration: underline; }
 .ck-link svg { width: 13px; height: 13px; }
 
-/* 외부 링크 확인 (green, distinct from CK link) */
+/* 외부 링크 확인 */
 .ext-link { font-size: 13px; color: #15803d; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
 .ext-link:hover { text-decoration: underline; }
 .ext-link svg { width: 13px; height: 13px; }
 
-/* Register button (CK style) */
+/* Register button */
 .btn-register {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 0 16px; height: 36px;
@@ -143,10 +163,9 @@ body {
 }
 .btn-register:hover { background: #6a45d6; }
 
-/* Register row: button + help icon */
 .register-row { display: flex; align-items: center; gap: 6px; }
 
-/* Help icon (?) with tooltip */
+/* Help icon */
 .help-icon {
   position: relative;
   width: 22px; height: 22px; border-radius: 50%;
@@ -172,6 +191,82 @@ body {
   border: 6px solid transparent; border-top-color: var(--text-primary);
 }
 .help-icon:hover .help-tooltip { visibility: visible; opacity: 1; }
+
+/* ── Registration Modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.45); z-index: 200;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: #fff; border-radius: 12px;
+  width: 580px; max-width: 95vw; max-height: 85vh;
+  overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  animation: modalIn .2s ease;
+}
+@keyframes modalIn { from { opacity:0; transform:scale(.96) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h2 { font-size: 18px; font-weight: 700; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; background: var(--surface-alt);
+  font-size: 18px; cursor: pointer; color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--border); }
+
+.modal-body { padding: 20px 24px; }
+
+.modal-rawtext {
+  font-size: 14px; line-height: 1.6; color: var(--text-secondary);
+  background: var(--surface-alt); padding: 12px 16px;
+  border-radius: var(--radius); border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.modal-rawtext-label { font-size: 12px; font-weight: 700; color: var(--text-tertiary); margin-bottom: 6px; }
+
+.modal-section-title {
+  font-size: 14px; font-weight: 700; color: var(--text-primary);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.modal-section-title .auto-badge {
+  font-size: 11px; font-weight: 600; padding: 2px 8px;
+  border-radius: 10px; background: #dcfce7; color: #15803d;
+}
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.form-group input, .form-group select {
+  height: 40px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  font-size: 14px; font-family: inherit; color: var(--text-primary);
+  background: #fff; transition: border-color .15s;
+}
+.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--ck-cyan); }
+.form-group input.prefilled { background: #fefce8; border-color: #fde047; }
+
+.modal-footer {
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+.btn-modal {
+  padding: 0 20px; height: 42px;
+  font-size: 15px; font-weight: 700; font-family: inherit;
+  border-radius: var(--radius); cursor: pointer; transition: all .15s;
+}
+.btn-modal.cancel { border: 1px solid var(--border); background: #fff; color: var(--text-primary); }
+.btn-modal.cancel:hover { background: var(--surface-alt); }
+.btn-modal.submit { border: none; background: var(--ck-purple); color: #fff; }
+.btn-modal.submit:hover { background: #6a45d6; }
 
 /* ── Bottom Action Bar ── */
 .bottom-bar {
@@ -220,14 +315,18 @@ body {
   <div class="summary-card">
     <div class="summary-title">검증 결과 요약</div>
     <div class="stats-row">
-      <div class="stat-block"><span class="stat-number total">18</span><span class="stat-label">전체 참고문헌</span></div>
+      <div class="stat-block"><span class="stat-number total">18</span><span class="stat-label">전체</span></div>
       <div class="stat-divider"></div>
-      <div class="stat-block"><span class="stat-number confirmed">14</span><span class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--confirmed-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>확인</span></div>
-      <div class="stat-block"><span class="stat-number unconfirmed">4</span><span class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--unconfirmed-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>미확인</span></div>
+      <div class="stat-block"><span class="stat-number exact">11</span><span class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--exact-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>확인</span></div>
+      <div class="stat-block"><span class="stat-number partial">3</span><span class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--partial-color)" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>부분일치</span></div>
+      <div class="stat-block"><span class="stat-number mismatch">2</span><span class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mismatch-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>미확인</span></div>
+      <div class="stat-block"><span class="stat-number insufficient">2</span><span class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="var(--insufficient-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>판정불가</span></div>
     </div>
     <div class="progress-bar">
-      <div class="progress-segment confirmed" style="width:77.8%"></div>
-      <div class="progress-segment unconfirmed" style="width:22.2%"></div>
+      <div class="progress-segment exact" style="width:61.1%"></div>
+      <div class="progress-segment partial" style="width:16.7%"></div>
+      <div class="progress-segment mismatch" style="width:11.1%"></div>
+      <div class="progress-segment insufficient" style="width:11.1%"></div>
     </div>
     <div class="type-tags">
       <span class="type-tag">학술논문 12건</span>
@@ -247,69 +346,71 @@ body {
   <div class="filter-bar">
     <div class="filter-tabs">
       <button class="filter-tab active" data-filter="all">전체 <span class="filter-count">18</span></button>
-      <button class="filter-tab" data-filter="confirmed">확인 <span class="filter-count">14</span></button>
-      <button class="filter-tab" data-filter="unconfirmed">미확인 <span class="filter-count">4</span></button>
+      <button class="filter-tab" data-filter="exact">확인 <span class="filter-count">11</span></button>
+      <button class="filter-tab" data-filter="partial">부분일치 <span class="filter-count">3</span></button>
+      <button class="filter-tab" data-filter="mismatch">미확인 <span class="filter-count">2</span></button>
+      <button class="filter-tab" data-filter="insufficient">판정불가 <span class="filter-count">2</span></button>
     </div>
   </div>
 
   <!-- Reference List -->
   <div class="ref-list" id="refList">
 
-    <!-- 1. 확인 -->
-    <div class="ref-card" data-status="confirmed">
+    <!-- 1. exactMatch - CK 텀즈 -->
+    <div class="ref-card" data-status="exact">
       <div class="ref-card-main">
         <div class="ref-number">1</div>
         <div class="ref-content">
           <div class="ref-citation">김영재 (2014). 중국 고대도성계획에서 宗廟·社稷의 배치와 그 의미 - 商代에서 秦代까지. <em>대한건축학회연합논문집</em>, 16(2), 1-10.</div>
           <div class="ref-tags">
-            <span class="ref-type-badge thesis">학술논문</span>
+            <span class="ref-type-badge paper">학술논문</span>
             <span class="ref-field-tag"><strong>저자</strong> 김영재</span>
             <span class="ref-field-tag"><strong>연도</strong> 2014</span>
             <span class="ref-field-tag"><strong>학술지</strong> 대한건축학회연합논문집</span>
           </div>
         </div>
         <div class="ref-right">
-          <div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="status-label confirmed">확인</div>
-          <a href="#" class="ck-link" onclick="event.preventDefault(); alert('CK 텀즈 상세 페이지')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
+          <div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="status-label exact">확인</div>
+          <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
         </div>
       </div>
     </div>
 
-    <!-- 2. 확인 -->
-    <div class="ref-card" data-status="confirmed">
+    <!-- 2. exactMatch -->
+    <div class="ref-card" data-status="exact">
       <div class="ref-card-main">
         <div class="ref-number">2</div>
         <div class="ref-content">
           <div class="ref-citation">도용호, 이재헌 (1995). 유학적 질서규범에 의한 향교건축의 배치에 관한 연구. <em>대한건축학회 논문집</em>, 11(7), 77-89.</div>
-          <div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span><span class="ref-field-tag"><strong>저자</strong> 도용호, 이재헌</span><span class="ref-field-tag"><strong>연도</strong> 1995</span></div>
+          <div class="ref-tags"><span class="ref-type-badge paper">학술논문</span><span class="ref-field-tag"><strong>저자</strong> 도용호, 이재헌</span><span class="ref-field-tag"><strong>연도</strong> 1995</span></div>
         </div>
         <div class="ref-right">
-          <div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="status-label confirmed">확인</div>
+          <div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="status-label exact">확인</div>
           <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
         </div>
       </div>
     </div>
 
-    <!-- 3. 확인 -->
-    <div class="ref-card" data-status="confirmed">
+    <!-- 3. exactMatch -->
+    <div class="ref-card" data-status="exact">
       <div class="ref-card-main">
         <div class="ref-number">3</div>
         <div class="ref-content">
           <div class="ref-citation">배영동 (2004). 종가의 사당을 통해본 조상관. <em>한국민속학</em>, 39, 117-154.</div>
-          <div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span><span class="ref-field-tag"><strong>저자</strong> 배영동</span><span class="ref-field-tag"><strong>연도</strong> 2004</span></div>
+          <div class="ref-tags"><span class="ref-type-badge paper">학술논문</span><span class="ref-field-tag"><strong>저자</strong> 배영동</span><span class="ref-field-tag"><strong>연도</strong> 2004</span></div>
         </div>
         <div class="ref-right">
-          <div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="status-label confirmed">확인</div>
+          <div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="status-label exact">확인</div>
           <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
         </div>
       </div>
     </div>
 
-    <!-- 4. 확인 - 도서 -->
-    <div class="ref-card" data-status="confirmed">
+    <!-- 4. exactMatch - 도서 -->
+    <div class="ref-card" data-status="exact">
       <div class="ref-card-main">
         <div class="ref-number">4</div>
         <div class="ref-content">
@@ -317,53 +418,64 @@ body {
           <div class="ref-tags"><span class="ref-type-badge book">도서</span><span class="ref-field-tag"><strong>저자</strong> 서울특별시</span><span class="ref-field-tag"><strong>연도</strong> 2021</span><span class="ref-field-tag"><strong>출판사</strong> 고려문화사</span></div>
         </div>
         <div class="ref-right">
-          <div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="status-label confirmed">확인</div>
+          <div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="status-label exact">확인</div>
           <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
         </div>
       </div>
     </div>
 
-    <!-- 5. 미확인 -->
-    <div class="ref-card" data-status="unconfirmed">
+    <!-- 5. partialMatch - 제목 일치, 저자 불일치 -->
+    <div class="ref-card" data-status="partial">
       <div class="ref-card-main">
         <div class="ref-number">5</div>
         <div class="ref-content">
-          <div class="ref-citation">이상범 (연도미상). 금산칠백의총도.</div>
-          <div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span><span class="ref-field-tag"><strong>저자</strong> 이상범</span><span class="ref-field-tag" style="color:var(--unconfirmed-color)"><strong>연도</strong> 미상</span></div>
+          <div class="ref-citation">신성곤 (2014). 종묘(宗廟) 제도(制度)의 탄생: 종묘(宗廟)의 공간과 배치를 중심으로. <em>동아시아문화연구</em>, 57, 41-67.</div>
+          <div class="ref-tags">
+            <span class="ref-type-badge paper">학술논문</span>
+            <span class="ref-field-tag"><strong>저자</strong> 신성곤</span>
+            <span class="ref-field-tag"><strong>연도</strong> 2014</span>
+          </div>
+          <div class="matched-fields">
+            <span class="match-pill matched">제목 일치</span>
+            <span class="match-pill matched">연도 일치</span>
+            <span class="match-pill unmatched">저자 불일치</span>
+            <span class="confidence-tag">신뢰도 72%</span>
+          </div>
         </div>
         <div class="ref-right">
-          <div class="status-icon unconfirmed"><span class="excl">!</span></div>
-          <div class="status-label unconfirmed">미확인</div>
+          <div class="status-icon partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="none"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="status-label partial">부분일치</div>
+          <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
           <div class="register-row">
-            <button class="btn-register">
+            <button class="btn-register" onclick="openRegisterModal(5)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               직접 등록
             </button>
-            <div class="help-icon">?<div class="help-tooltip">CK 텀즈에 해당 출처가 아직 등록되어 있지 않을 수 있습니다. 출처를 직접 등록하시면 확인 상태로 변경됩니다.</div></div>
+            <div class="help-icon">?<div class="help-tooltip">제목은 일치하나 저자명이 다릅니다. 올바른 출처라면 직접 등록하여 확인 상태로 변경할 수 있습니다.</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 6. 확인 - 웹자료 (외부 링크만 존재) -->
-    <div class="ref-card" data-status="confirmed">
+    <!-- 6. exactMatch - 웹자료 (외부 링크) -->
+    <div class="ref-card" data-status="exact">
       <div class="ref-card-main">
         <div class="ref-number">6</div>
         <div class="ref-content">
           <div class="ref-citation">서울특별시 문화공보관 (1978). 사육신묘 성역화 사업. <em>서울기록원</em>. <span style="color:#15803d">https://archives.seoul.go.kr/item/6090</span></div>
-          <div class="ref-tags"><span class="ref-type-badge web">웹자료</span><span class="ref-field-tag"><strong>저자</strong> 서울특별시 문화공보관</span><span class="ref-field-tag"><strong>URL</strong> archives.seoul.go.kr</span></div>
+          <div class="ref-tags"><span class="ref-type-badge webpage">웹자료</span><span class="ref-field-tag"><strong>저자</strong> 서울특별시 문화공보관</span><span class="ref-field-tag"><strong>URL</strong> archives.seoul.go.kr</span></div>
         </div>
         <div class="ref-right">
-          <div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="status-label confirmed">확인</div>
-          <a href="https://archives.seoul.go.kr/item/6090" class="ext-link" target="_blank" onclick="event.preventDefault(); alert('외부 링크: archives.seoul.go.kr/item/6090')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>외부 링크 확인</a>
+          <div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="status-label exact">확인</div>
+          <a href="#" class="ext-link" target="_blank" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>외부 링크 확인</a>
         </div>
       </div>
     </div>
 
-    <!-- 7. 미확인 - 도서 -->
-    <div class="ref-card" data-status="unconfirmed">
+    <!-- 7. mismatch - 도서 -->
+    <div class="ref-card" data-status="mismatch">
       <div class="ref-card-main">
         <div class="ref-number">7</div>
         <div class="ref-content">
@@ -371,10 +483,10 @@ body {
           <div class="ref-tags"><span class="ref-type-badge book">도서</span><span class="ref-field-tag"><strong>저자</strong> 장철수</span><span class="ref-field-tag"><strong>연도</strong> 1992</span></div>
         </div>
         <div class="ref-right">
-          <div class="status-icon unconfirmed"><span class="excl">!</span></div>
-          <div class="status-label unconfirmed">미확인</div>
+          <div class="status-icon mismatch"><svg viewBox="0 0 24 24"><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div class="status-label mismatch">미확인</div>
           <div class="register-row">
-            <button class="btn-register">
+            <button class="btn-register" onclick="openRegisterModal(7)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               직접 등록
             </button>
@@ -384,47 +496,246 @@ body {
       </div>
     </div>
 
-    <!-- 8. 확인 -->
-    <div class="ref-card" data-status="confirmed">
+    <!-- 8. exactMatch -->
+    <div class="ref-card" data-status="exact">
       <div class="ref-card-main">
         <div class="ref-number">8</div>
         <div class="ref-content">
           <div class="ref-citation">조선일보 (1973.02.20). 왜란(倭亂)때 산화(散華)한 선조(先祖) 기려 만인의총(萬義人塚) 성역화운동. <em>조선일보</em>.</div>
-          <div class="ref-tags"><span class="ref-type-badge web">웹자료</span><span class="ref-field-tag"><strong>매체</strong> 조선일보</span><span class="ref-field-tag"><strong>날짜</strong> 1973.02.20</span></div>
+          <div class="ref-tags"><span class="ref-type-badge news">뉴스</span><span class="ref-field-tag"><strong>매체</strong> 조선일보</span><span class="ref-field-tag"><strong>날짜</strong> 1973.02.20</span></div>
         </div>
         <div class="ref-right">
-          <div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="status-label confirmed">확인</div>
+          <div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="status-label exact">확인</div>
           <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
         </div>
       </div>
     </div>
 
-    <!-- 9~12. 확인 -->
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">9</div><div class="ref-content"><div class="ref-citation">손정주, 류성룡 (2015). 조선후기 주택의 사당구성과 건축형식 연구: 성주 한개마을 대상으로. <em>한국주거학회 추계학술발표대회 논문집</em>, 27(2), 191-196.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 9. exactMatch -->
+    <div class="ref-card" data-status="exact"><div class="ref-card-main"><div class="ref-number">9</div><div class="ref-content"><div class="ref-citation">손정주, 류성룡 (2015). 조선후기 주택의 사당구성과 건축형식 연구: 성주 한개마을 대상으로. <em>한국주거학회 추계학술발표대회 논문집</em>, 27(2), 191-196.</div><div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div></div><div class="ref-right"><div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label exact">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
 
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">10</div><div class="ref-content"><div class="ref-citation">손태진, 조중근, 김흥곤 (1997). 조선시대 삼묘건축 비교. <em>대한건축학회 논문집</em>, 13(7), 105-116.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 10. exactMatch -->
+    <div class="ref-card" data-status="exact"><div class="ref-card-main"><div class="ref-number">10</div><div class="ref-content"><div class="ref-citation">손태진, 조중근, 김흥곤 (1997). 조선시대 삼묘건축 비교. <em>대한건축학회 논문집</em>, 13(7), 105-116.</div><div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div></div><div class="ref-right"><div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label exact">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
 
-    <!-- 11. 미확인 -->
-    <div class="ref-card" data-status="unconfirmed"><div class="ref-card-main"><div class="ref-number">11</div><div class="ref-content"><div class="ref-citation">신성곤 (2014). 종묘(宗廟) 제도(制度)의 탄생: 종묘(宗廟)의 공간과 배치를 중심으로. <em>동아시아문화연구</em>, 57, 41-67.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon unconfirmed"><span class="excl">!</span></div><div class="status-label unconfirmed">미확인</div><div class="register-row"><button class="btn-register"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>직접 등록</button><div class="help-icon">?<div class="help-tooltip">CK 텀즈에 해당 출처가 아직 등록되어 있지 않을 수 있습니다. 출처를 직접 등록하시면 확인 상태로 변경됩니다.</div></div></div></div></div></div>
+    <!-- 11. partialMatch - 제목 일치, 날짜 불일치 -->
+    <div class="ref-card" data-status="partial">
+      <div class="ref-card-main">
+        <div class="ref-number">11</div>
+        <div class="ref-content">
+          <div class="ref-citation">이상범 (연도미상). 금산칠백의총도.</div>
+          <div class="ref-tags"><span class="ref-type-badge paper">학술논문</span><span class="ref-field-tag"><strong>저자</strong> 이상범</span><span class="ref-field-tag" style="color:var(--mismatch-color)"><strong>연도</strong> 미상</span></div>
+          <div class="matched-fields">
+            <span class="match-pill matched">제목 일치</span>
+            <span class="match-pill matched">저자 일치</span>
+            <span class="match-pill unmatched">날짜 누락</span>
+            <span class="confidence-tag">신뢰도 65%</span>
+          </div>
+        </div>
+        <div class="ref-right">
+          <div class="status-icon partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="none"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="status-label partial">부분일치</div>
+          <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
+          <div class="register-row">
+            <button class="btn-register" onclick="openRegisterModal(11)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              직접 등록
+            </button>
+            <div class="help-icon">?<div class="help-tooltip">제목과 저자는 일치하나 날짜 정보가 누락되어 있습니다. 직접 등록하여 확인 상태로 변경할 수 있습니다.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- 12. 미확인 - 도서 -->
-    <div class="ref-card" data-status="unconfirmed"><div class="ref-card-main"><div class="ref-number">12</div><div class="ref-content"><div class="ref-citation">서울특별시 (1985). <em>효창공원정비 및 사당건립기본계획</em>. 서울특별시.</div><div class="ref-tags"><span class="ref-type-badge book">도서</span></div></div><div class="ref-right"><div class="status-icon unconfirmed"><span class="excl">!</span></div><div class="status-label unconfirmed">미확인</div><div class="register-row"><button class="btn-register"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>직접 등록</button><div class="help-icon">?<div class="help-tooltip">CK 텀즈에 해당 출처가 아직 등록되어 있지 않을 수 있습니다. 출처를 직접 등록하시면 확인 상태로 변경됩니다.</div></div></div></div></div></div>
+    <!-- 12. insufficient - 도서, 정보 부족 -->
+    <div class="ref-card" data-status="insufficient">
+      <div class="ref-card-main">
+        <div class="ref-number">12</div>
+        <div class="ref-content">
+          <div class="ref-citation">서울특별시 (1985). <em>효창공원정비 및 사당건립기본계획</em>. 서울특별시.</div>
+          <div class="ref-tags"><span class="ref-type-badge report">보고서</span></div>
+          <div class="matched-fields">
+            <span class="match-pill unmatched">식별자 없음</span>
+            <span class="confidence-tag">비교 정보 부족</span>
+          </div>
+        </div>
+        <div class="ref-right">
+          <div class="status-icon insufficient"><span class="dash">&mdash;</span></div>
+          <div class="status-label insufficient">판정불가</div>
+          <div class="register-row">
+            <button class="btn-register" onclick="openRegisterModal(12)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              직접 등록
+            </button>
+            <div class="help-icon">?<div class="help-tooltip">비교에 필요한 정보(식별자 등)가 부족하여 판정할 수 없습니다. 직접 등록하여 확인 상태로 변경할 수 있습니다.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- 13~18. 확인 -->
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">13</div><div class="ref-content"><div class="ref-citation">이성혜 (2019). 琉球의 공자묘 창건과 명륜당 건립의 의미. <em>퇴계학논총</em>, 33, 183-209.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 13. exactMatch -->
+    <div class="ref-card" data-status="exact"><div class="ref-card-main"><div class="ref-number">13</div><div class="ref-content"><div class="ref-citation">이성혜 (2019). 琉球의 공자묘 창건과 명륜당 건립의 의미. <em>퇴계학논총</em>, 33, 183-209.</div><div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div></div><div class="ref-right"><div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label exact">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
 
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">14</div><div class="ref-content"><div class="ref-citation">정영태 (2014). 정유재란시 남원성전투와 만인의총. <em>호남사학회 논문집</em>, 59, 139-212.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 14. exactMatch -->
+    <div class="ref-card" data-status="exact"><div class="ref-card-main"><div class="ref-number">14</div><div class="ref-content"><div class="ref-citation">정영태 (2014). 정유재란시 남원성전투와 만인의총. <em>호남사학회 논문집</em>, 59, 139-212.</div><div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div></div><div class="ref-right"><div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label exact">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
 
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">15</div><div class="ref-content"><div class="ref-citation">최지희 (1990). 조선시대사당의 장소성 해석. <em>대한건축학회논문집</em>, 6(1), 141-157.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 15. partialMatch - 저자명 표기 차이 -->
+    <div class="ref-card" data-status="partial">
+      <div class="ref-card-main">
+        <div class="ref-number">15</div>
+        <div class="ref-content">
+          <div class="ref-citation">최지희 (1990). 조선시대사당의 장소성 해석. <em>대한건축학회논문집</em>, 6(1), 141-157.</div>
+          <div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div>
+          <div class="matched-fields">
+            <span class="match-pill matched">제목 일치</span>
+            <span class="match-pill matched">날짜 일치</span>
+            <span class="match-pill unmatched">저자 표기 차이</span>
+            <span class="confidence-tag">신뢰도 78%</span>
+          </div>
+        </div>
+        <div class="ref-right">
+          <div class="status-icon partial"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="none"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="status-label partial">부분일치</div>
+          <a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a>
+        </div>
+      </div>
+    </div>
 
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">16</div><div class="ref-content"><div class="ref-citation">홍승재, 박언곤, 김흥곤 (1990). 조선시대 건축과 예제에 관한 연구: 가묘와 가례를 중심으로. <em>대한건축학회 논문집</em>, 6(1), 101-108.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 16. exactMatch -->
+    <div class="ref-card" data-status="exact"><div class="ref-card-main"><div class="ref-number">16</div><div class="ref-content"><div class="ref-citation">홍승재, 박언곤, 김흥곤 (1990). 조선시대 건축과 예제에 관한 연구: 가묘와 가례를 중심으로. <em>대한건축학회 논문집</em>, 6(1), 101-108.</div><div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div></div><div class="ref-right"><div class="status-icon exact"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label exact">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
 
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">17</div><div class="ref-content"><div class="ref-citation">이정국, 박광규, 이해성 (1995). 조선시대 향교건축의 배치와 공간구성에 관한 연구. <em>대한건축학회 논문집</em>.</div><div class="ref-tags"><span class="ref-type-badge thesis">학술논문</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ck-link" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>CK 텀즈에서 확인</a></div></div></div>
+    <!-- 17. mismatch -->
+    <div class="ref-card" data-status="mismatch">
+      <div class="ref-card-main">
+        <div class="ref-number">17</div>
+        <div class="ref-content">
+          <div class="ref-citation">이정국, 박광규, 이해성 (1995). 조선시대 향교건축의 배치와 공간구성에 관한 연구. <em>대한건축학회 논문집</em>.</div>
+          <div class="ref-tags"><span class="ref-type-badge paper">학술논문</span></div>
+        </div>
+        <div class="ref-right">
+          <div class="status-icon mismatch"><svg viewBox="0 0 24 24"><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+          <div class="status-label mismatch">미확인</div>
+          <div class="register-row">
+            <button class="btn-register" onclick="openRegisterModal(17)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              직접 등록
+            </button>
+            <div class="help-icon">?<div class="help-tooltip">CK 텀즈에 해당 출처가 아직 등록되어 있지 않을 수 있습니다. 출처를 직접 등록하시면 확인 상태로 변경됩니다.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- 18. 확인 - 웹자료 (외부 링크만 존재) -->
-    <div class="ref-card" data-status="confirmed"><div class="ref-card-main"><div class="ref-number">18</div><div class="ref-content"><div class="ref-citation">조선일보 (1959.05.13). 칠백의총(七百義塚)과 종용당(從容堂). <em>조선일보</em>. <span style="color:#15803d">https://newslibrary.chosun.com/view/article_view.html?id=1959051300001</span></div><div class="ref-tags"><span class="ref-type-badge web">웹자료</span><span class="ref-field-tag"><strong>URL</strong> newslibrary.chosun.com</span></div></div><div class="ref-right"><div class="status-icon confirmed"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div><div class="status-label confirmed">확인</div><a href="#" class="ext-link" target="_blank" onclick="event.preventDefault(); alert('외부 링크: newslibrary.chosun.com')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>외부 링크 확인</a></div></div></div>
+    <!-- 18. insufficient - 웹자료 -->
+    <div class="ref-card" data-status="insufficient">
+      <div class="ref-card-main">
+        <div class="ref-number">18</div>
+        <div class="ref-content">
+          <div class="ref-citation">조선일보 (1959.05.13). 칠백의총(七百義塚)과 종용당(從容堂). <em>조선일보</em>. <span style="color:#15803d">https://newslibrary.chosun.com/view/article_view.html?id=1959051300001</span></div>
+          <div class="ref-tags"><span class="ref-type-badge news">뉴스</span><span class="ref-field-tag"><strong>URL</strong> newslibrary.chosun.com</span></div>
+          <div class="matched-fields">
+            <span class="match-pill unmatched">CK DB 미등록</span>
+            <span class="confidence-tag">외부 링크만 존재</span>
+          </div>
+        </div>
+        <div class="ref-right">
+          <div class="status-icon insufficient"><span class="dash">&mdash;</span></div>
+          <div class="status-label insufficient">판정불가</div>
+          <a href="#" class="ext-link" target="_blank" onclick="event.preventDefault()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>외부 링크 확인</a>
+          <div class="register-row">
+            <button class="btn-register" onclick="openRegisterModal(18)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              직접 등록
+            </button>
+            <div class="help-icon">?<div class="help-tooltip">외부 링크는 확인되나 CK 텀즈에 등록되지 않은 출처입니다. 직접 등록하시면 확인 상태로 변경됩니다.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+  </div>
+</div>
+
+<!-- Registration Modal -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>CK 텀즈에 출처 등록</h2>
+      <button class="modal-close" onclick="closeRegisterModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-rawtext-label">원문 출처표기</div>
+      <div class="modal-rawtext" id="modalRawText">장철수 (1992). 사당의 역사와 건축. 서울: 민속출판사.</div>
+
+      <div class="modal-section-title">
+        파싱된 메타데이터
+        <span class="auto-badge">자동 추출</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>출처 유형</label>
+          <select id="regType">
+            <option value="paper">학술논문</option>
+            <option value="book" selected>도서</option>
+            <option value="report">보고서</option>
+            <option value="webpage">웹자료</option>
+            <option value="news">뉴스</option>
+            <option value="patent">특허</option>
+            <option value="standard">표준</option>
+            <option value="dataset">데이터셋</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>발행연도</label>
+          <input type="text" id="regYear" value="1992" class="prefilled">
+        </div>
+        <div class="form-group full">
+          <label>제목</label>
+          <input type="text" id="regTitle" value="사당의 역사와 건축" class="prefilled">
+        </div>
+        <div class="form-group">
+          <label>저자</label>
+          <input type="text" id="regCreators" value="장철수" class="prefilled">
+        </div>
+        <div class="form-group">
+          <label>발행처 / 출판사</label>
+          <input type="text" id="regPublisher" value="민속출판사" class="prefilled">
+        </div>
+        <div class="form-group">
+          <label>식별자 유형</label>
+          <select id="regIdType">
+            <option value="">없음</option>
+            <option value="doi">DOI</option>
+            <option value="isbn">ISBN</option>
+            <option value="patent">특허번호</option>
+            <option value="standard">표준번호</option>
+            <option value="report">보고서번호</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>식별자 값</label>
+          <input type="text" id="regIdValue" value="" placeholder="예: 978-89-XXXX-XXX-X">
+        </div>
+        <div class="form-group">
+          <label>발행일</label>
+          <input type="text" id="regDate" value="" placeholder="예: 1992-03-15">
+        </div>
+        <div class="form-group">
+          <label>URL</label>
+          <input type="text" id="regUrl" value="" placeholder="예: https://...">
+        </div>
+      </div>
+
+      <div style="font-size:13px; color:var(--text-tertiary); line-height:1.5; padding:10px 14px; background:var(--surface-alt); border-radius:var(--radius); border:1px solid var(--border);">
+        <strong style="color:var(--partial-color);">노란색 필드</strong>는 REFERENCE-EXTRACT가 자동 추출한 값입니다. 확인 후 필요시 수정해주세요.<br>
+        빈 필드는 추출되지 않은 항목이며, 입력하시면 검증 정확도가 높아집니다.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal cancel" onclick="closeRegisterModal()">취소</button>
+      <button class="btn-modal submit" onclick="submitRegister()">CK 텀즈에 등록</button>
+    </div>
   </div>
 </div>
 
@@ -441,6 +752,7 @@ body {
 </div>
 
 <script>
+// Filter tabs
 document.querySelectorAll('.filter-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -450,6 +762,51 @@ document.querySelectorAll('.filter-tab').forEach(tab => {
       card.style.display = (filter === 'all' || card.dataset.status === filter) ? '' : 'none';
     });
   });
+});
+
+// Mock reference data (simulates REFERENCE-EXTRACT output)
+const refData = {
+  5: { rawText: '신성곤 (2014). 종묘(宗廟) 제도(制度)의 탄생: 종묘(宗廟)의 공간과 배치를 중심으로. 동아시아문화연구, 57, 41-67.', type: 'paper', title: '종묘(宗廟) 제도(制度)의 탄생: 종묘(宗廟)의 공간과 배치를 중심으로', creators: '신성곤', publisher: '동아시아문화연구', year: '2014', date: '', idType: '', idValue: '', url: '' },
+  7: { rawText: '장철수 (1992). 사당의 역사와 건축. 서울: 민속출판사.', type: 'book', title: '사당의 역사와 건축', creators: '장철수', publisher: '민속출판사', year: '1992', date: '', idType: '', idValue: '', url: '' },
+  11: { rawText: '이상범 (연도미상). 금산칠백의총도.', type: 'paper', title: '금산칠백의총도', creators: '이상범', publisher: '', year: '', date: '', idType: '', idValue: '', url: '' },
+  12: { rawText: '서울특별시 (1985). 효창공원정비 및 사당건립기본계획. 서울특별시.', type: 'report', title: '효창공원정비 및 사당건립기본계획', creators: '서울특별시', publisher: '서울특별시', year: '1985', date: '', idType: '', idValue: '', url: '' },
+  17: { rawText: '이정국, 박광규, 이해성 (1995). 조선시대 향교건축의 배치와 공간구성에 관한 연구. 대한건축학회 논문집.', type: 'paper', title: '조선시대 향교건축의 배치와 공간구성에 관한 연구', creators: '이정국, 박광규, 이해성', publisher: '대한건축학회 논문집', year: '1995', date: '', idType: '', idValue: '', url: '' },
+  18: { rawText: '조선일보 (1959.05.13). 칠백의총(七百義塚)과 종용당(從容堂). 조선일보.', type: 'news', title: '칠백의총(七百義塚)과 종용당(從容堂)', creators: '조선일보', publisher: '조선일보', year: '1959', date: '1959-05-13', idType: '', idValue: '', url: 'https://newslibrary.chosun.com/view/article_view.html?id=1959051300001' }
+};
+
+function openRegisterModal(refId) {
+  const data = refData[refId];
+  if (!data) return;
+  document.getElementById('modalRawText').textContent = data.rawText;
+  document.getElementById('regType').value = data.type;
+  document.getElementById('regTitle').value = data.title;
+  document.getElementById('regCreators').value = data.creators;
+  document.getElementById('regPublisher').value = data.publisher;
+  document.getElementById('regYear').value = data.year;
+  document.getElementById('regDate').value = data.date;
+  document.getElementById('regIdType').value = data.idType;
+  document.getElementById('regIdValue').value = data.idValue;
+  document.getElementById('regUrl').value = data.url;
+  // Mark prefilled fields
+  ['regTitle','regCreators','regPublisher','regYear','regDate','regUrl'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.toggle('prefilled', el.value !== '');
+  });
+  document.getElementById('registerModal').classList.add('show');
+}
+
+function closeRegisterModal() {
+  document.getElementById('registerModal').classList.remove('show');
+}
+
+function submitRegister() {
+  alert('CK 텀즈 등록 API 호출 (목업)\n\n제목: ' + document.getElementById('regTitle').value + '\n저자: ' + document.getElementById('regCreators').value + '\n유형: ' + document.getElementById('regType').value);
+  closeRegisterModal();
+}
+
+// Close modal on overlay click
+document.getElementById('registerModal').addEventListener('click', function(e) {
+  if (e.target === this) closeRegisterModal();
 });
 </script>
 </body>
