@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카피킬러 — 결과 상세 (출처유효성검사 목업)</title>
+<style>
+/* ─── Reset & Base (카피킬러 실제 UI 기반) ─── */
+:root {
+  --ck-cyan: #00c2ff;
+  --ck-cyan-dark: #00a8dd;
+  --ck-pink: #ff3f7a;
+  --ck-orange-gradient: linear-gradient(135deg,#ff9a56,#ff6b6b);
+  --ck-purple-gradient: linear-gradient(135deg,#a855f7,#6366f1);
+  --exact-color: #22c55e;
+  --exact-bg: #f0fdf4;
+  --partial-color: #f59e0b;
+  --partial-bg: #fffbeb;
+  --mismatch-color: #ef4444;
+  --mismatch-bg: #fef2f2;
+  --insuff-color: #9ca3af;
+  --insuff-bg: #f9fafb;
+  --registered-color: #a855f7;
+  --registered-bg: #faf5ff;
+  --bg: #f7f7f8;
+  --surface: #fff;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --text: #1f2937;
+  --text-sub: #6b7280;
+  --text-muted: #9ca3af;
+  --radius: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ─── Screens ─── */
+.screen{display:none}.screen.active{display:block}
+
+/* ═══════════════════════════════════════════
+   SCREEN 1 — result-detail (카피킬러 실제 레이아웃)
+   ═══════════════════════════════════════════ */
+.rd-wrap{display:flex;height:100vh;overflow:hidden}
+
+/* Left: Document */
+.rd-left{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-right:1px solid var(--border)}
+.rd-left-header{padding:20px 28px 0;flex-shrink:0}
+.rd-doc-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;text-align:center}
+.rd-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px}
+.rd-toolbar select{flex:1;height:38px;border:1px solid var(--border);border-radius:4px;padding:0 12px;font-size:13px;font-family:inherit;color:var(--text)}
+.rd-toolbar .nav-group{display:flex;align-items:center;gap:4px}
+.rd-toolbar .nav-btn{width:32px;height:32px;border:1px solid var(--border);background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text-sub)}
+.rd-toolbar .nav-label{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+
+.rd-doc-body{flex:1;overflow-y:auto;padding:0 28px 80px}
+.rd-section-toggle{font-size:13px;font-weight:600;color:var(--text);cursor:pointer;padding:8px 0;display:flex;align-items:center;gap:4px}
+.rd-section-toggle::before{content:'▾';font-size:11px}
+.rd-body-text{font-size:13.5px;line-height:2;color:#333;margin-bottom:16px}
+.rd-body-text .hl{background:rgba(255,63,122,.12);border-bottom:2px solid var(--ck-pink);padding:1px 2px}
+.rd-ref-section{margin-top:24px;padding-top:16px;border-top:2px solid #333}
+.rd-ref-section h4{font-size:13px;font-weight:700;margin-bottom:10px}
+.rd-ref-item{font-size:12.5px;line-height:1.7;color:#444;margin-bottom:5px}
+.rd-ref-item em{font-style:italic}
+
+/* Right: Panel */
+.rd-right{width:420px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg)}
+
+/* Plagiarism Rate Header */
+.rd-rate-bar{padding:18px 20px 12px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:baseline;justify-content:space-between}
+.rd-rate{display:flex;align-items:baseline;gap:6px}
+.rd-rate-label{font-size:14px;font-weight:700;color:var(--text)}
+.rd-rate-value{font-size:32px;font-weight:900;color:var(--ck-pink)}
+.rd-rate-pct{font-size:16px;font-weight:700;color:var(--ck-pink)}
+.rd-type-tabs{display:flex;gap:8px}
+.rd-type-tab{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;color:#fff;cursor:pointer}
+.rd-type-tab.ck{background:var(--ck-orange-gradient)}
+.rd-type-tab.gpt{background:var(--ck-purple-gradient)}
+.rd-type-tab.inactive{opacity:.4}
+
+/* Compare tabs */
+.rd-compare-tabs{display:flex;border-bottom:1px solid var(--border);background:#fff}
+.rd-compare-tab{flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent}
+.rd-compare-tab.active{color:var(--text);border-bottom-color:var(--text)}
+
+/* Suspect Sentence List */
+.rd-suspect-area{flex:1;overflow-y:auto;background:#fff}
+.rd-suspect-header{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;margin:12px 14px 8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center}
+.rd-suspect-header .label{font-size:12px;font-weight:700;color:var(--mismatch-color);display:flex;align-items:center;gap:4px}
+.rd-suspect-header .label::before{content:'!';display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--mismatch-color);color:#fff;font-size:11px;font-weight:800}
+.rd-suspect-header .rate{font-size:12px;font-weight:700;color:var(--mismatch-color)}
+.rd-source-item{padding:10px 14px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background .1s}
+.rd-source-item:hover{background:#fafafa}
+.rd-source-item .src-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.rd-source-item .src-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+.rd-source-item .src-name::before{content:'›';font-size:16px;color:var(--text-muted)}
+.rd-source-item .src-icons{display:flex;gap:8px}
+.rd-source-item .src-icon{font-size:12px;color:var(--text-muted);cursor:pointer}
+.rd-source-expanded{padding:10px 14px 14px;border-bottom:1px solid var(--border-light);background:#fafafa}
+.rd-source-expanded .src-info{font-size:12px;color:var(--text-sub);margin-bottom:6px;background:#fff;padding:8px 10px;border-radius:4px;border:1px solid var(--border)}
+.rd-source-expanded .src-info div{margin-bottom:3px}
+.rd-source-expanded .src-quote{font-size:12.5px;line-height:1.7;color:#333}
+.rd-source-expanded .src-quote .match{color:var(--ck-pink);font-weight:500}
+
+/* ── NEW: Source Validity Summary ── */
+.sv-panel{margin:10px 14px 14px;position:relative;border:2px dashed var(--partial-color);border-radius:var(--radius);background:#fff;overflow:hidden}
+.sv-panel::before{content:'NEW';position:absolute;top:-1px;right:12px;background:var(--partial-color);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:0 0 4px 4px;letter-spacing:.5px;z-index:1}
+.sv-panel-header{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light)}
+.sv-panel-header .title{font-size:13px;font-weight:700;color:var(--text)}
+.sv-panel-header .link{font-size:12px;color:var(--ck-cyan-dark);cursor:pointer;font-weight:600;text-decoration:none}
+.sv-panel-header .link:hover{text-decoration:underline}
+.sv-panel-body{padding:10px 14px}
+.sv-mini-stats{display:flex;gap:5px;margin-bottom:6px}
+.sv-mini-stat{flex:1;text-align:center;padding:6px 2px;border-radius:4px}
+.sv-mini-stat .n{font-size:16px;font-weight:800}
+.sv-mini-stat .l{font-size:10px;color:var(--text-muted);margin-top:1px}
+.sv-mini-stat.exact{background:var(--exact-bg)}.sv-mini-stat.exact .n{color:var(--exact-color)}
+.sv-mini-stat.partial{background:var(--partial-bg)}.sv-mini-stat.partial .n{color:var(--partial-color)}
+.sv-mini-stat.mismatch{background:var(--mismatch-bg)}.sv-mini-stat.mismatch .n{color:var(--mismatch-color)}
+.sv-mini-stat.insuff{background:var(--insuff-bg)}.sv-mini-stat.insuff .n{color:var(--insuff-color)}
+.sv-mini-note{font-size:11px;color:var(--text-muted)}.sv-mini-note strong{color:var(--mismatch-color)}
+
+/* Bottom Bar (카피킬러 실제 UI) */
+.rd-bottom-bar{position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;z-index:100}
+.rd-bottom-btn{display:inline-flex;align-items:center;gap:6px;padding:0 20px;height:40px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.rd-bottom-btn:hover{background:var(--border-light)}
+.rd-bottom-btn.dark{background:#374151;color:#fff;border-color:#374151}
+.rd-bottom-btn.dark:hover{background:#4b5563}
+.rd-bottom-btn.cyan{background:var(--ck-cyan);color:#fff;border-color:var(--ck-cyan)}
+.rd-bottom-btn.cyan:hover{background:var(--ck-cyan-dark)}
+
+/* ═══════════════════════════════════════════
+   SCREEN 2 — 출처유효성검사 상세
+   ═══════════════════════════════════════════ */
+.det-layout{max-width:880px;margin:0 auto;padding:28px 24px 100px}
+.det-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.det-top h1{font-size:17px;font-weight:800}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:36px;font-size:13px;font-weight:700;font-family:inherit;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text);transition:all .12s}
+.btn:hover{background:var(--border-light)}
+.btn.cyan{background:var(--ck-cyan);color:#fff;border-color:var(--ck-cyan)}.btn.cyan:hover{background:var(--ck-cyan-dark)}
+.btn.purple{background:#7c3aed;color:#fff;border-color:#7c3aed}.btn.purple:hover{background:#6d28d9}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn svg{width:15px;height:15px}
+
+.det-summary{display:flex;gap:10px;margin-bottom:18px}
+.det-stat{flex:1;text-align:center;padding:14px 6px;border-radius:var(--radius);border:1px solid var(--border);background:#fff}
+.det-stat .n{font-size:28px;font-weight:800}.det-stat .l{font-size:12px;color:var(--text-sub);margin-top:2px}
+.det-stat.exact .n{color:var(--exact-color)}.det-stat.partial .n{color:var(--partial-color)}
+.det-stat.mismatch .n{color:var(--mismatch-color)}.det-stat.insuff .n{color:var(--insuff-color)}
+
+.det-meta{font-size:12px;color:var(--text-muted);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+.filter-row{display:flex;gap:6px;margin-bottom:12px}
+.fbtn{padding:5px 12px;font-size:12px;font-weight:600;border-radius:16px;border:1px solid var(--border);background:#fff;color:var(--text-sub);cursor:pointer;font-family:inherit;transition:all .12s}
+.fbtn:hover{border-color:var(--text-sub)}.fbtn.active{background:var(--ck-cyan);color:#fff;border-color:var(--ck-cyan)}
+
+.ref-list{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.ref-row{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;border-bottom:1px solid var(--border-light);transition:background .08s}
+.ref-row:last-child{border-bottom:none}.ref-row:hover{background:#fafafa}
+.ref-row .chk{margin-top:3px;accent-color:#7c3aed;width:15px;height:15px;cursor:pointer}
+.ref-row .idx{font-size:11px;color:var(--text-muted);min-width:22px;margin-top:2px}
+.ref-row .cnt{flex:1;min-width:0}
+.ref-row .cit{font-size:12.5px;line-height:1.6;color:var(--text);margin-bottom:3px}.ref-row .cit em{font-style:italic}
+.ref-row .tags{display:flex;flex-wrap:wrap;gap:4px}
+.badge{display:inline-block;padding:1px 7px;border-radius:3px;font-size:10px;font-weight:700}
+.badge.exact{background:var(--exact-bg);color:var(--exact-color)}.badge.partial{background:var(--partial-bg);color:var(--partial-color)}
+.badge.mismatch{background:var(--mismatch-bg);color:var(--mismatch-color)}.badge.insuff{background:var(--insuff-bg);color:var(--insuff-color)}
+.badge.registered{background:var(--registered-bg);color:var(--registered-color)}.badge.type{background:#f3f4f6;color:var(--text-sub)}
+.pill{font-size:9px;padding:1px 5px;border-radius:6px;font-weight:700}.pill.ok{background:#dcfce7;color:#15803d}.pill.ng{background:#fee2e2;color:#dc2626}
+
+.det-bar{position:fixed;bottom:0;left:0;right:0;height:56px;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:100}
+.det-bar-left{font-size:13px;color:var(--text-sub)}.det-bar-left strong{color:#7c3aed}
+.det-bar-right{display:flex;gap:8px}
+
+/* ═══════════════════════════════════════════
+   SCREEN 3 — CK 텀즈 등록
+   ═══════════════════════════════════════════ */
+.reg-layout{max-width:720px;margin:0 auto;padding:28px 24px 60px}
+.reg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.reg-top h1{font-size:17px;font-weight:800}
+.reg-note{font-size:12px;color:var(--text-sub);margin-bottom:14px;padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:var(--radius)}
+.reg-list{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.reg-item{padding:14px;border-bottom:1px solid var(--border-light)}.reg-item:last-child{border-bottom:none}
+.reg-item-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.reg-item-head .cit{font-size:12px;font-weight:600;flex:1}
+.reg-meta{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-size:11.5px;display:grid;grid-template-columns:72px 1fr;gap:3px 10px}
+.reg-meta .k{font-weight:700;color:var(--text-sub)}.reg-meta .v{color:var(--text)}
+.reg-item.done{background:var(--exact-bg)}
+.reg-done-msg{font-size:11px;color:var(--exact-color);font-weight:700;margin-top:6px}
+
+/* ─── Utils ─── */
+.fade-in{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:300;display:none}
+.toast.show{display:block;animation:fadeIn .15s ease}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 1 — result-detail
+     ═══════════════════════════════════════════ -->
+<div class="screen active" id="screen-rd">
+<div class="rd-wrap">
+
+  <!-- LEFT: Document Body -->
+  <div class="rd-left">
+    <div class="rd-left-header">
+      <div class="rd-doc-name">조선시대_사당건축의_배치와_공간구성에_관한_연구.docx</div>
+      <div class="rd-toolbar">
+        <select><option>전체 결과 (18)</option></select>
+        <div class="nav-group">
+          <button class="nav-btn">&#9650;</button>
+          <span class="nav-label">검출 문장 이동</span>
+          <button class="nav-btn">&#9660;</button>
+        </div>
+      </div>
+    </div>
+    <div class="rd-doc-body">
+      <div class="rd-section-toggle">본문</div>
+      <div class="rd-body-text">
+        <p style="margin-bottom:12px"><b>I. 서론</b></p>
+        <p style="margin-bottom:12px">조선시대 사당건축은 유교적 예제에 근거하여 형성된 독특한 건축유형으로, 조선왕조 500년간 지속적으로 건립되었다. <span class="hl">사당은 단순한 제례 공간이 아니라, 유교적 세계관에서 조상과 후손을 잇는 핵심적인 매개 공간으로 기능하였다.</span> 특히 주자가례(朱子家禮)의 보급과 함께 사대부 가옥에서 사당의 배치는 필수적인 요소로 자리잡았다.</p>
+        <p style="margin-bottom:12px"><span class="hl">본 연구는 조선시대 사당건축의 배치유형과 공간구성 원리를 분석하고, 유교적 예제와 풍수지리의 영향을 규명하는 것을 목적으로 한다.</span> 연구 대상은 경상북도 일대에 현존하는 사대부 가옥 내 사당 25동으로 한정하였으며, 현장 실측조사와 문헌 고찰을 병행하였다.</p>
+        <p style="margin-bottom:12px"><b>II. 이론적 배경</b></p>
+        <p style="margin-bottom:12px">조선시대 사당의 건립 근거는 크게 두 가지로 나뉜다. 첫째는 주자가례에 의한 예제적 근거이며, 둘째는 국조오례의(國朝五禮儀)에 의한 국가 제도적 근거이다. <span class="hl">김영재(2014)는 중국 고대도성계획에서 종묘·사직의 배치와 그 의미를 분석하면서, 상대에서 진대까지의 변천 과정을 고찰하였다.</span></p>
+        <p style="margin-bottom:12px">도용호와 이재헌(1995)은 유학적 질서규범에 의한 향교건축의 배치를 연구하였으며, 전학후묘(前學後廟)와 전묘후학(前廟後學)의 배치 원리를 규명하였다. <span class="hl">배영동(2004)은 종가의 사당을 통해 조선시대 조상관의 변천을 분석하였는데, 사당이 단순한 건축물이 아니라 가문의 정체성을 상징하는 공간임을 밝혔다.</span></p>
+        <p style="margin-bottom:12px"><b>III. 사당의 배치유형 분석</b></p>
+        <p style="margin-bottom:12px">조사 대상 25동의 사당을 배치 위치에 따라 분류하면, 정침(正寢) 동북쪽 배치가 15동(60%)으로 가장 많았으며, 이는 주자가례의 원칙과 부합한다. <span class="hl">손정주와 류성룡(2015)은 성주 한개마을을 대상으로 조선후기 주택의 사당구성과 건축형식을 연구하면서, 지역적 특성에 따른 배치 변용을 확인하였다.</span></p>
+        <p style="margin-bottom:12px">손태진, 조중근, 김흥곤(1997)은 조선시대 삼묘건축을 비교 분석하면서 종묘, 문묘, 가묘 사이의 건축적 위계 차이를 규명하였다. 홍승재, 박언곤, 김흥곤(1990)은 조선시대 건축과 예제에 관한 연구에서 가묘와 가례를 중심으로 사당건축의 의례적 특성을 고찰하였다.</p>
+        <p style="margin-bottom:12px"><b>IV. 결론</b></p>
+        <p style="margin-bottom:12px">본 연구를 통해 조선시대 사당건축의 배치는 주자가례의 예제적 원리를 기본으로 하면서도, 지형 조건과 풍수적 고려에 의해 다양한 변용이 이루어졌음을 확인하였다.</p>
+      </div>
+
+      <!-- References -->
+      <div class="rd-ref-section">
+        <h4>참고문헌</h4>
+        <div class="rd-ref-item">[1] 김영재 (2014). 중국 고대도성계획에서 宗廟·社稷의 배치와 그 의미. <em>대한건축학회연합논문집</em>, 16(2), 1-10.</div>
+        <div class="rd-ref-item">[2] 도용호, 이재헌 (1995). 유학적 질서규범에 의한 향교건축의 배치에 관한 연구. <em>대한건축학회 논문집</em>, 11(7), 77-89.</div>
+        <div class="rd-ref-item">[3] 배영동 (2004). 종가의 사당을 통해본 조상관. <em>한국민속학</em>, 39, 117-154.</div>
+        <div class="rd-ref-item">[4] 서울특별시 (2021). <em>효창공원의 역사 및 도시공간 변천사</em>. 서울: 고려문화사.</div>
+        <div class="rd-ref-item">[5] 신성곤 (2014). 종묘 제도의 탄생. <em>동아시아문화연구</em>, 57, 41-67.</div>
+        <div class="rd-ref-item">[6] 서울특별시 문화공보관 (1978). 사육신묘 성역화 사업. <em>서울기록원</em>.</div>
+        <div class="rd-ref-item">[7] 장철수 (1992). <em>사당의 역사와 건축</em>. 서울: 민속출판사.</div>
+        <div class="rd-ref-item">[8] 조선일보 (1973.02.20). 왜란때 산화한 선조 기려 만인의총 성역화운동. <em>조선일보</em>.</div>
+        <div class="rd-ref-item">[9] 손정주, 류성룡 (2015). 조선후기 주택의 사당구성과 건축형식 연구. <em>한국주거학회 논문집</em>, 27(2), 191-196.</div>
+        <div class="rd-ref-item">[10] 손태진, 조중근, 김흥곤 (1997). 조선시대 삼묘건축 비교. <em>대한건축학회 논문집</em>, 13(7), 105-116.</div>
+        <div class="rd-ref-item">[11] 이상범 (연도미상). 금산칠백의총도.</div>
+        <div class="rd-ref-item">[12] 서울특별시 (1985). <em>효창공원정비 및 사당건립기본계획</em>. 서울특별시.</div>
+        <div class="rd-ref-item">[13] 이성혜 (2019). 琉球의 공자묘 창건과 명륜당 건립의 의미. <em>퇴계학논총</em>, 33, 183-209.</div>
+        <div class="rd-ref-item">[14] 정영태 (2014). 정유재란시 남원성전투와 만인의총. <em>호남사학회 논문집</em>, 59, 139-212.</div>
+        <div class="rd-ref-item">[15] 최지희 (1990). 조선시대사당의 장소성 해석. <em>대한건축학회논문집</em>, 6(1), 141-157.</div>
+        <div class="rd-ref-item">[16] 홍승재, 박언곤, 김흥곤 (1990). 조선시대 건축과 예제에 관한 연구. <em>대한건축학회 논문집</em>, 6(1), 101-108.</div>
+        <div class="rd-ref-item">[17] 이정국, 박광규, 이해성 (1995). 조선시대 향교건축의 배치와 공간구성에 관한 연구. <em>대한건축학회 논문집</em>.</div>
+        <div class="rd-ref-item">[18] 조선일보 (1959.05.13). 칠백의총과 종용당. <em>조선일보</em>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Panel -->
+  <div class="rd-right">
+
+    <!-- Rate + Type tabs -->
+    <div class="rd-rate-bar">
+      <div class="rd-rate">
+        <span class="rd-rate-label">표절률</span>
+        <span class="rd-rate-value">23</span><span class="rd-rate-pct">%</span>
+      </div>
+      <div class="rd-type-tabs">
+        <div class="rd-type-tab ck">&#10003; 카피킬러</div>
+        <div class="rd-type-tab gpt inactive">&#10003; GPT킬러</div>
+      </div>
+    </div>
+
+    <!-- Compare tabs -->
+    <div class="rd-compare-tabs">
+      <div class="rd-compare-tab active">비교 문장</div>
+      <div class="rd-compare-tab">비교 문서</div>
+    </div>
+
+    <!-- Suspect sentences -->
+    <div class="rd-suspect-area">
+      <div class="rd-suspect-header">
+        <span class="label">의심 문장</span>
+        <span class="rate">문장표절률 35%</span>
+      </div>
+
+      <!-- Source items (expanded first) -->
+      <div class="rd-source-expanded">
+        <div class="src-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:13px;font-weight:600">&#9662; 출처: www.dbpia.co.kr</span>
+          <span style="font-size:12px;color:var(--text-muted)">&#x1F517; &#9776;</span>
+        </div>
+        <div class="src-info">
+          <div>출처정보</div>
+          <div>- 비교범위: 카피킬러 DB</div>
+          <div>- 파일명: 조선시대 사당건축의 배치유형에 관한 연구</div>
+        </div>
+        <div class="src-quote" style="margin-top:8px">
+          <span class="match">사당은 단순한 제례 공간이 아니라, 유교적 세계관에서 조상과 후손을 잇는</span> 핵심적인 매개 공간으로 기능하였다.
+        </div>
+      </div>
+
+      <div class="rd-source-item">
+        <div class="src-head">
+          <span class="src-name">출처: www.riss.kr</span>
+          <span class="src-icons">&#x1F517; &#9776;</span>
+        </div>
+      </div>
+      <div class="rd-source-item">
+        <div class="src-head">
+          <span class="src-name">출처: Copykiller</span>
+          <span class="src-icons">&#9776;</span>
+        </div>
+      </div>
+      <div class="rd-source-item">
+        <div class="src-head">
+          <span class="src-name">출처: www.kci.go.kr</span>
+          <span class="src-icons">&#x1F517; &#9776;</span>
+        </div>
+      </div>
+      <div class="rd-source-item">
+        <div class="src-head">
+          <span class="src-name">출처: scholar.dkyobobook.co.kr</span>
+          <span class="src-icons">&#x1F517; &#9776;</span>
+        </div>
+      </div>
+      <div class="rd-source-item">
+        <div class="src-head">
+          <span class="src-name">출처: www.dbpia.co.kr</span>
+          <span class="src-icons">&#x1F517; &#9776;</span>
+        </div>
+      </div>
+
+      <!-- ═══ NEW: 출처 유효성 검사 요약 영역 ═══ -->
+      <div class="sv-panel">
+        <div class="sv-panel-header">
+          <span class="title">출처 유효성 검사</span>
+          <a class="link" onclick="goDetail()">상세보기 &rarr;</a>
+        </div>
+        <div class="sv-panel-body">
+          <div class="sv-mini-stats" id="svStats">
+            <div class="sv-mini-stat exact"><div class="n" id="pExact">11</div><div class="l">확인</div></div>
+            <div class="sv-mini-stat partial"><div class="n" id="pPartial">3</div><div class="l">부분일치</div></div>
+            <div class="sv-mini-stat mismatch"><div class="n" id="pMismatch">2</div><div class="l">미확인</div></div>
+            <div class="sv-mini-stat insuff"><div class="n" id="pInsuff">2</div><div class="l">판정불가</div></div>
+          </div>
+          <div class="sv-mini-note">참고문헌 18건 중 <strong>미확인 <span id="pMNote">2</span>건</strong></div>
+        </div>
+      </div>
+
+    </div><!-- /rd-suspect-area -->
+  </div><!-- /rd-right -->
+
+</div><!-- /rd-wrap -->
+
+<!-- Bottom bar -->
+<div class="rd-bottom-bar">
+  <button class="rd-bottom-btn dark">&#9881; GPT상세</button>
+  <button class="rd-bottom-btn dark">&#9881; 관리자 설정</button>
+  <button class="rd-bottom-btn">&#9745; 표절기준 설정</button>
+  <button class="rd-bottom-btn cyan">&#8681; 결과 다운로드</button>
+</div>
+</div><!-- /screen-rd -->
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 2 — 출처유효성검사 상세
+     ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-det">
+<div class="det-layout fade-in">
+  <div class="det-top">
+    <h1>출처 유효성 검사 결과</h1>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="goRD()">&#8592; 결과 상세로 돌아가기</button>
+    </div>
+  </div>
+
+  <div class="det-summary" id="detSum">
+    <div class="det-stat exact"><div class="n" id="dExact">11</div><div class="l">확인</div></div>
+    <div class="det-stat partial"><div class="n" id="dPartial">3</div><div class="l">부분일치</div></div>
+    <div class="det-stat mismatch"><div class="n" id="dMismatch">2</div><div class="l">미확인</div></div>
+    <div class="det-stat insuff"><div class="n" id="dInsuff">2</div><div class="l">판정불가</div></div>
+  </div>
+
+  <div class="det-meta">조선시대_사당건축의_배치와_공간구성에_관한_연구.docx &nbsp;|&nbsp; 참고문헌 18건 &nbsp;|&nbsp; 검사일시 2026-03-30 14:23</div>
+
+  <div class="filter-row">
+    <button class="fbtn active" onclick="filter(this,'all')">전체 18</button>
+    <button class="fbtn" onclick="filter(this,'mismatch')">미확인 <span id="fM">2</span></button>
+    <button class="fbtn" onclick="filter(this,'partial')">부분일치 3</button>
+    <button class="fbtn" onclick="filter(this,'insuff')">판정불가 <span id="fI">2</span></button>
+  </div>
+
+  <div class="ref-list" id="refList"></div>
+</div>
+
+<div class="det-bar">
+  <div class="det-bar-left"><strong id="selCnt">0</strong>건 선택됨</div>
+  <div class="det-bar-right">
+    <button class="btn" id="btnRe" onclick="recheck()">&#x21bb; 재검사</button>
+    <button class="btn purple" id="btnReg" onclick="goReg()" disabled>+ 선택 항목 CK 텀즈 등록</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 3 — CK 텀즈 등록
+     ═══════════════════════════════════════════ -->
+<div class="screen" id="screen-reg">
+<div class="reg-layout fade-in">
+  <div class="reg-top">
+    <h1>CK 텀즈 등록</h1>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="goDetail()">&#8592; 돌아가기</button>
+      <button class="btn purple" onclick="doReg()">+ CK 텀즈 등록</button>
+    </div>
+  </div>
+  <div class="reg-note">선택한 출처의 메타데이터 분석 결과입니다. 확인 후 [CK 텀즈 등록]을 클릭하면 즉시 등록됩니다.</div>
+  <div class="reg-list" id="regList"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Data ──
+const R=[
+{id:1,c:'김영재 (2014). 중국 고대도성계획에서 宗廟·社稷의 배치와 그 의미. <em>대한건축학회연합논문집</em>, 16(2), 1-10.',v:'exact',t:'학술논문',m:{title:'중국 고대도성계획에서 宗廟·社稷의 배치와 그 의미',creators:'김영재',publisher:'대한건축학회연합논문집',year:'2014'}},
+{id:2,c:'도용호, 이재헌 (1995). 유학적 질서규범에 의한 향교건축의 배치에 관한 연구. <em>대한건축학회 논문집</em>, 11(7), 77-89.',v:'exact',t:'학술논문',m:{title:'유학적 질서규범에 의한 향교건축의 배치에 관한 연구',creators:'도용호, 이재헌',publisher:'대한건축학회 논문집',year:'1995'}},
+{id:3,c:'배영동 (2004). 종가의 사당을 통해본 조상관. <em>한국민속학</em>, 39, 117-154.',v:'exact',t:'학술논문',m:{title:'종가의 사당을 통해본 조상관',creators:'배영동',publisher:'한국민속학',year:'2004'}},
+{id:4,c:'서울특별시 (2021). <em>효창공원의 역사 및 도시공간 변천사</em>. 서울: 고려문화사.',v:'exact',t:'도서',m:{title:'효창공원의 역사 및 도시공간 변천사',creators:'서울특별시',publisher:'고려문화사',year:'2021'}},
+{id:5,c:'신성곤 (2014). 종묘 제도의 탄생. <em>동아시아문화연구</em>, 57, 41-67.',v:'partial',t:'학술논문',mf:['제목 일치','연도 일치'],uf:['저자 불일치'],m:{title:'종묘 제도의 탄생',creators:'신성곤',publisher:'동아시아문화연구',year:'2014'}},
+{id:6,c:'서울특별시 문화공보관 (1978). 사육신묘 성역화 사업. <em>서울기록원</em>.',v:'exact',t:'웹자료',m:{title:'사육신묘 성역화 사업',creators:'서울특별시 문화공보관',publisher:'서울기록원',year:'1978'}},
+{id:7,c:'장철수 (1992). <em>사당의 역사와 건축</em>. 서울: 민속출판사.',v:'mismatch',t:'도서',m:{title:'사당의 역사와 건축',creators:'장철수',publisher:'민속출판사',year:'1992'}},
+{id:8,c:'조선일보 (1973.02.20). 왜란때 산화한 선조 기려 만인의총 성역화운동. <em>조선일보</em>.',v:'exact',t:'뉴스',m:{title:'왜란때 산화한 선조 기려 만인의총 성역화운동',creators:'조선일보',publisher:'조선일보',year:'1973',date:'1973-02-20'}},
+{id:9,c:'손정주, 류성룡 (2015). 조선후기 주택의 사당구성과 건축형식 연구. <em>한국주거학회 논문집</em>, 27(2), 191-196.',v:'exact',t:'학술논문',m:{title:'조선후기 주택의 사당구성과 건축형식 연구',creators:'손정주, 류성룡',publisher:'한국주거학회 논문집',year:'2015'}},
+{id:10,c:'손태진, 조중근, 김흥곤 (1997). 조선시대 삼묘건축 비교. <em>대한건축학회 논문집</em>, 13(7), 105-116.',v:'exact',t:'학술논문',m:{title:'조선시대 삼묘건축 비교',creators:'손태진, 조중근, 김흥곤',publisher:'대한건축학회 논문집',year:'1997'}},
+{id:11,c:'이상범 (연도미상). 금산칠백의총도.',v:'partial',t:'학술논문',mf:['제목 일치','저자 일치'],uf:['날짜 누락'],m:{title:'금산칠백의총도',creators:'이상범',publisher:'',year:''}},
+{id:12,c:'서울특별시 (1985). <em>효창공원정비 및 사당건립기본계획</em>. 서울특별시.',v:'insuff',t:'보고서',uf:['식별자 없음'],m:{title:'효창공원정비 및 사당건립기본계획',creators:'서울특별시',publisher:'서울특별시',year:'1985'}},
+{id:13,c:'이성혜 (2019). 琉球의 공자묘 창건과 명륜당 건립의 의미. <em>퇴계학논총</em>, 33, 183-209.',v:'exact',t:'학술논문',m:{title:'琉球의 공자묘 창건과 명륜당 건립의 의미',creators:'이성혜',publisher:'퇴계학논총',year:'2019'}},
+{id:14,c:'정영태 (2014). 정유재란시 남원성전투와 만인의총. <em>호남사학회 논문집</em>, 59, 139-212.',v:'exact',t:'학술논문',m:{title:'정유재란시 남원성전투와 만인의총',creators:'정영태',publisher:'호남사학회 논문집',year:'2014'}},
+{id:15,c:'최지희 (1990). 조선시대사당의 장소성 해석. <em>대한건축학회논문집</em>, 6(1), 141-157.',v:'partial',t:'학술논문',mf:['제목 일치','날짜 일치'],uf:['저자 표기 차이'],m:{title:'조선시대사당의 장소성 해석',creators:'최지희',publisher:'대한건축학회논문집',year:'1990'}},
+{id:16,c:'홍승재, 박언곤, 김흥곤 (1990). 조선시대 건축과 예제에 관한 연구. <em>대한건축학회 논문집</em>, 6(1), 101-108.',v:'exact',t:'학술논문',m:{title:'조선시대 건축과 예제에 관한 연구',creators:'홍승재, 박언곤, 김흥곤',publisher:'대한건축학회 논문집',year:'1990'}},
+{id:17,c:'이정국, 박광규, 이해성 (1995). 조선시대 향교건축의 배치와 공간구성에 관한 연구. <em>대한건축학회 논문집</em>.',v:'mismatch',t:'학술논문',m:{title:'조선시대 향교건축의 배치와 공간구성에 관한 연구',creators:'이정국, 박광규, 이해성',publisher:'대한건축학회 논문집',year:'1995'}},
+{id:18,c:'조선일보 (1959.05.13). 칠백의총과 종용당. <em>조선일보</em>.',v:'insuff',t:'뉴스',uf:['CK DB 미등록'],m:{title:'칠백의총과 종용당',creators:'조선일보',publisher:'조선일보',year:'1959',date:'1959-05-13',url:'https://newslibrary.chosun.com/...'}}
+];
+const VL={exact:'확인',partial:'부분일치',mismatch:'미확인',insuff:'판정불가'};
+let sel=new Set(),reg=new Set();
+
+// ── Navigation ──
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active')}
+function goRD(){show('rd')}
+function goDetail(){show('det');renderList()}
+function goReg(){show('reg');renderReg()}
+
+// ── Ref list ──
+function renderList(f){
+  f=f||'all';const el=document.getElementById('refList');let h='';
+  R.forEach(r=>{
+    if(f!=='all'&&r.v!==f)return;
+    const can=(r.v==='mismatch'||r.v==='insuff'||r.v==='partial')&&!reg.has(r.id);
+    const done=reg.has(r.id);
+    h+=`<div class="ref-row" style="${done?'background:var(--exact-bg)':''}">`;
+    if(can)h+=`<input type="checkbox" class="chk" ${sel.has(r.id)?'checked':''} onchange="tog(${r.id})"/>`;
+    else if(done)h+=`<input type="checkbox" class="chk" disabled checked style="accent-color:var(--exact-color)"/>`;
+    else h+=`<div style="width:15px"></div>`;
+    h+=`<div class="idx">[${r.id}]</div><div class="cnt"><div class="cit">${r.c}</div><div class="tags">`;
+    h+=done?`<span class="badge registered">등록됨</span>`:`<span class="badge ${r.v}">${VL[r.v]}</span>`;
+    h+=`<span class="badge type">${r.t}</span>`;
+    if(r.mf)r.mf.forEach(x=>{h+=`<span class="pill ok">${x}</span>`});
+    if(r.uf)r.uf.forEach(x=>{h+=`<span class="pill ng">${x}</span>`});
+    h+=`</div></div></div>`;
+  });
+  el.innerHTML=h;updSel();
+}
+function filter(btn,f){document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderList(f)}
+function tog(id){sel.has(id)?sel.delete(id):sel.add(id);updSel()}
+function updSel(){document.getElementById('selCnt').textContent=sel.size;document.getElementById('btnReg').disabled=sel.size===0}
+
+// ── Register ──
+function renderReg(){
+  const el=document.getElementById('regList');let h='';
+  R.filter(r=>sel.has(r.id)).forEach(r=>{
+    const m=r.m;
+    h+=`<div class="reg-item" id="ri${r.id}"><div class="reg-item-head"><span class="idx" style="font-size:11px;color:var(--text-muted)">[${r.id}]</span><span class="badge ${r.v}">${VL[r.v]}</span><span class="cit">${m.title}</span></div>`;
+    h+=`<div class="reg-meta"><div class="k">제목</div><div class="v">${m.title}</div><div class="k">저자</div><div class="v">${m.creators||'(미식별)'}</div><div class="k">발행처</div><div class="v">${m.publisher||'(미식별)'}</div><div class="k">발행연도</div><div class="v">${m.year||'(미식별)'}</div>`;
+    if(m.date)h+=`<div class="k">발행일</div><div class="v">${m.date}</div>`;
+    if(m.url)h+=`<div class="k">URL</div><div class="v">${m.url}</div>`;
+    h+=`</div></div>`;
+  });
+  el.innerHTML=h;
+}
+function doReg(){
+  sel.forEach(id=>{reg.add(id);const e=document.getElementById('ri'+id);if(e){e.classList.add('done');e.insertAdjacentHTML('beforeend','<div class="reg-done-msg">CK 텀즈 등록 완료</div>')}});
+  toast(sel.size+'건 CK 텀즈 등록 완료');sel.clear();
+  setTimeout(()=>goDetail(),1200);
+}
+
+// ── Recheck ──
+function recheck(){
+  toast('재검사 실행 중...');
+  setTimeout(()=>{
+    reg.forEach(id=>{const r=R.find(x=>x.id===id);if(r&&r.v!=='exact'){r.v='exact';delete r.mf;delete r.uf}});
+    reg.clear();updCounts();renderList();
+    toast('재검사 완료 — 등록된 출처가 확인으로 변경되었습니다');
+  },1500);
+}
+
+// ── Counts ──
+function updCounts(){
+  const c={exact:0,partial:0,mismatch:0,insuff:0};R.forEach(r=>c[r.v]++);
+  ['pExact','dExact'].forEach(x=>document.getElementById(x).textContent=c.exact);
+  ['pPartial','dPartial'].forEach(x=>document.getElementById(x).textContent=c.partial);
+  ['pMismatch','dMismatch'].forEach(x=>document.getElementById(x).textContent=c.mismatch);
+  ['pInsuff','dInsuff'].forEach(x=>document.getElementById(x).textContent=c.insuff);
+  document.getElementById('pMNote').textContent=c.mismatch;
+  document.getElementById('fM').textContent=c.mismatch;
+  document.getElementById('fI').textContent=c.insuff;
+}
+
+// ── Toast ──
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+</script>
+</body>
+</html>
